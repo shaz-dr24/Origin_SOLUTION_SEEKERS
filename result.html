@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ProcureAI — Result</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #141720;
+    --border: #252a36;
+    --accent: #00d4aa;
+    --accent2: #4f8ef7;
+    --warn: #f7c94f;
+    --danger: #f74f4f;
+    --text: #e2e8f0;
+    --muted: #6b7280;
+    --green: #22c55e;
+    --red: #ef4444;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'IBM Plex Sans', sans-serif; min-height: 100vh; }
+
+  nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 2rem; height: 60px;
+    border-bottom: 1px solid var(--border); background: var(--surface);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .nav-brand { font-family: 'IBM Plex Mono', monospace; font-size: 1.1rem; font-weight: 600; color: var(--accent); letter-spacing: 0.05em; }
+  .nav-brand span { color: var(--text); }
+  .nav-steps { display: flex; }
+  .nav-step {
+    padding: 0 1.2rem; height: 60px; display: flex; align-items: center; gap: 0.5rem;
+    font-size: 0.78rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--muted); text-decoration: none; border-bottom: 2px solid transparent; transition: all 0.2s;
+  }
+  .nav-step:hover { color: var(--text); }
+  .nav-step.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .nav-step .step-num { width: 20px; height: 20px; border-radius: 50%; background: var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-family: 'IBM Plex Mono', monospace; }
+  .nav-step.active .step-num { background: var(--accent); color: var(--bg); }
+  .nav-step.done .step-num { background: var(--green); color: var(--bg); }
+  .nav-step.done { color: var(--green); }
+
+  .page { max-width: 860px; margin: 0 auto; padding: 3rem 1.5rem; }
+  .page-header { margin-bottom: 2.5rem; }
+  .page-header h1 { font-size: 2rem; font-weight: 700; line-height: 1.2; margin-bottom: 0.5rem; }
+  .page-header h1 em { color: var(--accent); font-style: normal; }
+  .page-header p { color: var(--muted); font-size: 0.92rem; line-height: 1.6; }
+
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 2rem; margin-bottom: 1.5rem; }
+  .card-title { font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 1.2rem; display: flex; align-items: center; gap: 0.5rem; }
+  .card-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  /* WINNER CARD */
+  .winner-card {
+    background: linear-gradient(135deg, rgba(0,212,170,0.08) 0%, rgba(79,142,247,0.06) 100%);
+    border: 1px solid rgba(0,212,170,0.3);
+    border-radius: 10px;
+    padding: 2.2rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    animation: fadeIn 0.5s ease;
+  }
+  .winner-card::before {
+    content: '★';
+    position: absolute;
+    top: -20px; right: 30px;
+    font-size: 8rem;
+    color: rgba(0,212,170,0.04);
+    line-height: 1;
+  }
+  @keyframes fadeIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
+
+  .winner-label { font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.5rem; }
+  .winner-name { font-size: 2.2rem; font-weight: 700; color: var(--text); line-height: 1.1; margin-bottom: 1.4rem; }
+  .winner-stats { display: flex; gap: 2rem; flex-wrap: wrap; margin-bottom: 1.4rem; }
+  .winner-stat { }
+  .winner-stat-val { font-family: 'IBM Plex Mono', monospace; font-size: 1.4rem; font-weight: 600; color: var(--accent); }
+  .winner-stat-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-top: 0.2rem; }
+  .winner-badges { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+  .tag { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.72rem; font-family: 'IBM Plex Mono', monospace; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; }
+  .tag-success { background: rgba(34,197,94,0.12); color: var(--green); border: 1px solid rgba(34,197,94,0.3); }
+  .tag-accent { background: rgba(0,212,170,0.12); color: var(--accent); border: 1px solid rgba(0,212,170,0.3); }
+  .tag-info { background: rgba(79,142,247,0.12); color: var(--accent2); border: 1px solid rgba(79,142,247,0.3); }
+  .tag-warn { background: rgba(247,201,79,0.12); color: var(--warn); border: 1px solid rgba(247,201,79,0.3); }
+
+  /* AI JUSTIFICATION */
+  .ai-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent2);
+    border-radius: 6px;
+    padding: 1.3rem 1.5rem;
+    font-size: 0.93rem;
+    line-height: 1.8;
+    color: var(--text);
+    position: relative;
+  }
+  .ai-box::before {
+    content: 'AI';
+    position: absolute;
+    top: -10px; left: 1rem;
+    background: var(--accent2);
+    color: var(--bg);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 600;
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+    letter-spacing: 0.1em;
+  }
+  .ai-box p { margin-bottom: 0.5rem; }
+  .ai-box p:last-child { margin-bottom: 0; }
+
+  /* RANKING TABLE */
+  .comparison-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  thead tr { border-bottom: 2px solid var(--border); }
+  th { padding: 0.7rem 1rem; text-align: left; font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  td { padding: 0.8rem 1rem; border-bottom: 1px solid var(--border); }
+  tr:last-child td { border-bottom: none; }
+  tr.best-row { background: rgba(0,212,170,0.05); }
+  tr.best-row td:first-child { border-left: 3px solid var(--accent); }
+  tr.second-row { background: rgba(79,142,247,0.04); }
+  tr.second-row td:first-child { border-left: 3px solid var(--accent2); }
+  .rank-badge { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; font-weight: 600; }
+  .rank-1 { background: var(--accent); color: var(--bg); }
+  .rank-2 { background: var(--accent2); color: var(--bg); }
+  .rank-3 { background: var(--warn); color: var(--bg); }
+  .rank-n { background: var(--border); color: var(--muted); }
+  .mono { font-family: 'IBM Plex Mono', monospace; }
+  .best-badge { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 0.68rem; font-family: 'IBM Plex Mono', monospace; background: rgba(0,212,170,0.12); color: var(--accent); border: 1px solid rgba(0,212,170,0.3); margin-left: 0.5rem; }
+
+  /* SCORE BAR */
+  .score-cell { display: flex; align-items: center; gap: 0.6rem; }
+  .score-bar-bg { flex: 1; height: 5px; background: var(--border); border-radius: 3px; min-width: 60px; overflow: hidden; }
+  .score-bar-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--accent2), var(--accent)); }
+  .score-val { font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; color: var(--muted); min-width: 36px; text-align: right; }
+
+  /* HISTORICAL */
+  .hist-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1rem 1.2rem;
+    font-size: 0.85rem;
+    color: var(--muted);
+    display: flex; align-items: center; gap: 0.7rem;
+  }
+  .hist-icon { font-size: 1.3rem; }
+
+  /* EMPTY STATE */
+  .empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+  }
+  .empty-icon { font-size: 3rem; margin-bottom: 1rem; }
+  .empty-state h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .empty-state p { color: var(--muted); font-size: 0.88rem; max-width: 360px; margin: 0 auto 1.5rem; line-height: 1.6; }
+
+  .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.8rem; border-radius: 6px; font-family: 'IBM Plex Sans', sans-serif; font-size: 0.88rem; font-weight: 700; letter-spacing: 0.05em; cursor: pointer; border: none; transition: all 0.2s; text-decoration: none; }
+  .btn-primary { background: var(--accent); color: var(--bg); }
+  .btn-primary:hover { background: #00bfa0; transform: translateY(-1px); }
+  .btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--muted); }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+  .top-actions { display: flex; gap: 0.8rem; justify-content: flex-end; margin-bottom: 1.5rem; flex-wrap: wrap; }
+
+  .print-only { display: none; }
+  @media print {
+    nav, .top-actions { display: none; }
+    .print-only { display: block; }
+    body { background: white; color: black; }
+  }
+
+  @media (max-width: 600px) {
+    .nav-step { padding: 0 0.6rem; font-size: 0.68rem; }
+    .nav-step span:not(.step-num) { display: none; }
+    .page { padding: 1.5rem 1rem; }
+    .winner-name { font-size: 1.6rem; }
+    .winner-stats { gap: 1.2rem; }
+    th, td { padding: 0.6rem 0.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">Procure<span>AI</span></div>
+  <div class="nav-steps">
+    <a href="index.html" class="nav-step done"><span class="step-num">✓</span><span>Create RFQ</span></a>
+    <a href="upload.html" class="nav-step done"><span class="step-num">✓</span><span>Upload Vendors</span></a>
+    <a href="dashboard.html" class="nav-step done"><span class="step-num">✓</span><span>Dashboard</span></a>
+    <a href="result.html" class="nav-step active"><span class="step-num">4</span><span>Result</span></a>
+  </div>
+</nav>
+
+<div class="page" id="main-content">
+
+  <!-- NO DATA STATE -->
+  <div class="empty-state" id="empty-state" style="display:none;">
+    <div class="empty-icon">📋</div>
+    <h2>No Analysis Data Found</h2>
+    <p>Run the AI analysis on the Dashboard first to see the procurement result here.</p>
+    <a href="dashboard.html" class="btn btn-primary">Go to Dashboard →</a>
+  </div>
+
+  <!-- RESULT CONTENT -->
+  <div id="result-content" style="display:none;">
+
+    <div class="page-header">
+      <h1>Procurement <em>Result</em></h1>
+      <p>AI-driven vendor selection complete. Review the final decision, justification, and full ranking below.</p>
+    </div>
+
+    <div class="top-actions">
+      <a href="index.html" class="btn btn-secondary" style="padding: 0.5rem 1.2rem; font-size: 0.8rem;">← New RFQ</a>
+      <button class="btn btn-secondary" onclick="window.print()" style="padding: 0.5rem 1.2rem; font-size: 0.8rem;">🖨 Print Report</button>
+    </div>
+
+    <!-- WINNER CARD -->
+    <div class="winner-card" id="winner-card">
+      <div class="winner-label">✓ Selected Vendor</div>
+      <div class="winner-name" id="winner-name">—</div>
+      <div class="winner-stats" id="winner-stats"></div>
+      <div class="winner-badges" id="winner-badges"></div>
+    </div>
+
+    <!-- AI JUSTIFICATION -->
+    <div class="card">
+      <div class="card-title">AI Justification</div>
+      <div class="ai-box" id="ai-justification"></div>
+    </div>
+
+    <!-- HISTORICAL -->
+    <div class="card" id="hist-card" style="display:none;">
+      <div class="card-title">Historical Insight</div>
+      <div class="hist-box">
+        <span class="hist-icon">📊</span>
+        <span id="hist-text"></span>
+      </div>
+    </div>
+
+    <!-- RANKING TABLE -->
+    <div class="card">
+      <div class="card-title">Vendor Ranking</div>
+      <div style="color:var(--muted); font-size:0.8rem; margin-bottom:1rem;">
+        <span id="vendors-count"></span> vendors analyzed and ranked by weighted score (Price 40% · Delivery 30% · Warranty 20% · Confidence 10%)
+      </div>
+      <div class="comparison-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Vendor</th>
+              <th>Price</th>
+              <th>Delivery</th>
+              <th>Warranty</th>
+              <th>Confidence</th>
+              <th>Score</th>
+            </tr>
+          </thead>
+          <tbody id="ranking-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function loadResult() {
+    const raw = sessionStorage.getItem('finalResult');
+    if (!raw) {
+      document.getElementById('empty-state').style.display = 'block';
+      return;
+    }
+
+    let data;
+    try { data = JSON.parse(raw); } catch (e) {
+      document.getElementById('empty-state').style.display = 'block';
+      return;
+    }
+
+    document.getElementById('result-content').style.display = 'block';
+
+    const best = data.selected_vendor || {};
+    const ranking = data.ranking || [];
+    const ai = data.ai_justification || 'No AI justification provided.';
+    const hist = data.historical_insight || '';
+
+    // Winner card
+    document.getElementById('winner-name').textContent = best.vendor_name || 'Unknown';
+
+    const stats = [
+      { val: best.price ? `₹${(best.price).toLocaleString()}` : '—', label: 'Unit Price' },
+      { val: best.delivery_days ? `${best.delivery_days} days` : '—', label: 'Delivery' },
+      { val: best.warranty_years ? `${best.warranty_years} years` : '—', label: 'Warranty' },
+      { val: best.confidence ? `${Math.round(best.confidence * 100)}%` : '—', label: 'Confidence' },
+    ];
+
+    document.getElementById('winner-stats').innerHTML = stats.map(s => `
+      <div class="winner-stat">
+        <div class="winner-stat-val">${s.val}</div>
+        <div class="winner-stat-label">${s.label}</div>
+      </div>
+    `).join('');
+
+    // Badges
+    const badges = ['★ AI Selected', `#1 of ${ranking.length}`];
+    if (best.confidence >= 0.9) badges.push('High Confidence');
+    document.getElementById('winner-badges').innerHTML = badges.map((b, i) =>
+      `<span class="tag ${i === 0 ? 'tag-accent' : i === 1 ? 'tag-success' : 'tag-info'}">${b}</span>`
+    ).join('');
+
+    // AI text — split into paragraphs on sentence boundaries
+    const sentences = ai.split(/(?<=[.!?])\s+/);
+    const paras = [];
+    for (let i = 0; i < sentences.length; i += 2) {
+      paras.push(sentences.slice(i, i + 2).join(' '));
+    }
+    document.getElementById('ai-justification').innerHTML = paras.map(p => `<p>${p}</p>`).join('');
+
+    // Historical
+    if (hist) {
+      document.getElementById('hist-text').textContent = hist;
+      document.getElementById('hist-card').style.display = 'block';
+    }
+
+    // Ranking
+    document.getElementById('vendors-count').textContent = `${data.vendors_analyzed || ranking.length}`;
+
+    const maxScore = Math.max(...ranking.map(v => v.score || 0)) || 1;
+
+    document.getElementById('ranking-body').innerHTML = ranking.map((v, i) => {
+      const isBest = v.vendor_name === best.vendor_name;
+      const isSecond = i === 1;
+      const rankClass = i === 0 ? 'rank-1' : i === 1 ? 'rank-2' : i === 2 ? 'rank-3' : 'rank-n';
+      const rowClass = isBest ? 'best-row' : isSecond ? 'second-row' : '';
+      const scorePct = Math.round(((v.score || 0) / maxScore) * 100);
+
+      return `
+        <tr class="${rowClass}">
+          <td><span class="rank-badge ${rankClass}">${i + 1}</span></td>
+          <td>
+            <span style="font-weight:600;">${v.vendor_name}</span>
+            ${isBest ? '<span class="best-badge">★ Selected</span>' : ''}
+          </td>
+          <td class="mono">₹${(v.price || 0).toLocaleString()}</td>
+          <td class="mono">${v.delivery_days || '—'} days</td>
+          <td class="mono">${v.warranty_years || '—'} yrs</td>
+          <td class="mono">${Math.round((v.confidence || 0) * 100)}%</td>
+          <td>
+            <div class="score-cell">
+              <div class="score-bar-bg">
+                <div class="score-bar-fill" style="width:${scorePct}%"></div>
+              </div>
+              <span class="score-val">${(v.score || 0).toFixed(1)}</span>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  window.addEventListener('load', loadResult);
+</script>
+</body>
+</html>
