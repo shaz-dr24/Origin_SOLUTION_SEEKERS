@@ -1,93 +1,121 @@
-🧠 ProcureAI – AI-Powered Vendor Selection System
-
-An advanced AI procurement intelligence platform that automates:
-
-📄 Requirement understanding
-📑 Vendor quotation extraction
-📊 Multi-vendor comparison
-🧠 AI reasoning (RAG + LLM)
-🏆 Best vendor selection
-📌 Overview
-
-ProcureAI uses a combination of:
-
-OCR (Tesseract)
-LLM (Groq - LLaMA 3.3 / 3.1)
-Vector Search (FAISS)
-RAG Pipeline
-Scoring Engine
-
-to automatically analyze vendors and make intelligent procurement decisions.
 
 
-🚀 Key Features
+# 🧠 ProcureAI – AI-Powered Vendor Selection System
 
-🧠 AI Requirement Understanding
+An advanced **AI procurement intelligence platform** that automates vendor evaluation and decision-making using OCR, LLMs, and Retrieval-Augmented Generation (RAG).
 
-Converts natural language → structured RFQ
+---
+
+## 📌 Overview
+
+**ProcureAI** streamlines the procurement process by intelligently:
+
+* Understanding requirements from natural language
+* Extracting vendor data from documents
+* Comparing multiple vendors
+* Generating AI-driven justifications
+* Selecting the best vendor automatically
+
+It combines:
+
+* 🔍 OCR (Tesseract)
+* 🧠 LLM (Groq – LLaMA 3.3 / 3.1)
+* 📊 Vector Search (FAISS)
+* 🔄 RAG Pipeline
+* ⚙️ Scoring Engine
+
+---
+
+## 🚀 Key Features
+
+### 🧠 AI Requirement Understanding
+
+* Converts natural language → structured RFQ
+* Extracts:
+
+  * Item
+  * Quantity
+  * Budget
+  * Deadline
+  * Industry
+
+---
+
+### 📄 Vendor Document Processing
+
+* Supports:
+
+  * PDFs
+  * Images
+* Uses OCR for text extraction
+
+---
+
+### 🧾 Structured Vendor Extraction
+
 Extracts:
-Item
-Quantity
-Budget
-Deadline
-Industry
 
-📄 Vendor Document Processing
+* Vendor Name
+* Price
+* Delivery Days
+* Warranty
+* Confidence Score
 
-Supports:
-PDFs
-Images
-Uses OCR to extract text
+---
 
-🧾 Structured Vendor Extraction
+### 📊 Intelligent Vendor Scoring
 
-Extracts:
-Vendor Name
-Price
-Delivery Days
-Warranty
-Confidence Score
+Weighted scoring system:
 
-📊 Intelligent Vendor Scoring
+* 💰 Price → 40%
+* 🚚 Delivery → 30%
+* 🛠️ Warranty → 20%
+* 📈 Confidence → 10%
 
-Weighted scoring based on:
+---
 
-💰 Price (40%)
-🚚 Delivery (30%)
-🛠️ Warranty (20%)
-📈 Confidence (10%)
+### 🔍 RAG-Based Decision System
 
-🔍 RAG-Based Decision System
+* Builds vector database of vendor data
+* Retrieves contextual insights
+* Uses LLM for reasoning
 
-Builds vector DB of vendor data
-Retrieves contextual insights
-Uses LLM to generate justification
+---
 
-🧠 AI Justification Engine
+### 🧠 AI Justification Engine
 
-Generates human-readable reasoning
-Based on:
-Comparison stats
-Context retrieval
-Vendor performance
+* Generates human-readable explanations
+* Based on:
 
-⚡ Async Processing (Celery)
+  * Vendor comparison
+  * Retrieved context
+  * Performance metrics
 
-Background requirement processing
-Scalable architecture
+---
 
-🗄️ Supabase Integration
+### ⚡ Async Processing
+
+* Powered by Celery
+* Handles background processing efficiently
+* Scalable architecture
+
+---
+
+### 🗄️ Supabase Integration
 
 Stores:
 
-RFQs
-Vendors
-Quotations
-Documents
-Final Decisions
+* RFQs
+* Vendors
+* Quotations
+* Documents
+* Final decisions
 
-🏗️ System Architecture
+---
 
+## 🏗️ System Architecture
+
+```
 User Input (Requirement)
         ↓
 LLM Extraction (Groq)
@@ -111,19 +139,27 @@ AI Reasoning (Groq)
 Best Vendor Decision
         ↓
 Supabase Storage
+```
 
-⚙️ Tech Stack
+---
 
-Backend: FastAPI
-Async Tasks: Celery + Redis
-LLM: Groq (LLaMA 3.3 / 3.1)
-OCR: Tesseract + Poppler
-Vector DB: FAISS
-Embeddings: SentenceTransformers
-Database: Supabase
+## ⚙️ Tech Stack
 
-📁 Project Structure
+| Category    | Technology             |
+| ----------- | ---------------------- |
+| Backend     | FastAPI                |
+| Async Tasks | Celery + Redis         |
+| LLM         | Groq (LLaMA 3.3 / 3.1) |
+| OCR         | Tesseract + Poppler    |
+| Vector DB   | FAISS                  |
+| Embeddings  | SentenceTransformers   |
+| Database    | Supabase               |
 
+---
+
+## 📁 Project Structure
+
+```
 origin/procure_ai/
 │
 ├── llm.py
@@ -140,40 +176,55 @@ origin/procure_ai/
 ├── tasks.py
 ├── celery_worker.py
 └── ocr.py
+```
 
-📡 API Endpoints
+---
 
-🧠 Process Requirement
-POST /process
+## 📡 API Endpoints
 
-📊 Get Result
-GET /result/{task_id}
+### 🧠 Core APIs
 
-🧪 Test LLM Extraction
-POST /test-llm
+| Endpoint                | Description                    |
+| ----------------------- | ------------------------------ |
+| POST `/process`         | Process requirement            |
+| GET `/result/{task_id}` | Get result                     |
+| POST `/compare-vendors` | Compare vendors (Main Feature) |
 
-📄 Test Vendor File
-POST /test-vendor
+---
 
-🏆 Compare Vendors (MAIN FEATURE)
-POST /compare-vendors
+### 🧪 Testing APIs
 
-🔄 Full Pipeline
-POST /start-process
-POST /upload-vendor
-GET  /finalize
+| Endpoint            | Description         |
+| ------------------- | ------------------- |
+| POST `/test-llm`    | Test LLM extraction |
+| POST `/test-vendor` | Test vendor file    |
 
-🧠 RAG Pipeline Flow
+---
 
-Vendor scoring
-Convert vendors → documents
-Build vector DB
-Retrieve vendor context
-Generate AI justification
-Select best vendor
+### 🔄 Full Pipeline
 
-📊 Example Output
+| Endpoint              | Description        |
+| --------------------- | ------------------ |
+| POST `/start-process` | Start pipeline     |
+| POST `/upload-vendor` | Upload vendor docs |
+| GET `/finalize`       | Final decision     |
 
+---
+
+## 🧠 RAG Pipeline Flow
+
+1. Vendor scoring
+2. Convert vendors → documents
+3. Build vector database
+4. Retrieve context
+5. Generate AI justification
+6. Select best vendor
+
+---
+
+## 📊 Example Output
+
+```json
 {
   "selected_vendor": {
     "vendor_name": "ABC Tech",
@@ -185,76 +236,124 @@ Select best vendor
   "ai_justification": "ABC Tech offers the best balance of cost, delivery speed, and reliability.",
   "vendors_analyzed": 3
 }
+```
 
-⚙️ Setup Instructions
+---
 
-1️⃣ Clone Repo
+## ⚙️ Setup Instructions
+
+### 1️⃣ Clone Repository
+
+```bash
 git clone https://github.com/your-username/procure-ai.git
 cd procure-ai
+```
 
-2️⃣ Install Dependencies
+---
+
+### 2️⃣ Install Dependencies
+
+```bash
 pip install -r requirements.txt
+```
 
-3️⃣ Environment Variables
+---
 
-Create .env:
+### 3️⃣ Environment Variables
 
+Create a `.env` file:
+
+```env
 GROQ_API_KEY=your_key
 SUPABASE_URL=your_url
 SUPABASE_KEY=your_key
 REDIS_URL=redis://localhost:6379/0
+```
 
-4️⃣ Install External Tools
-🔹 Tesseract OCR
-Install & set path in code
-🔹 Poppler (for PDFs)
+---
 
-5️⃣ Run Redis
+### 4️⃣ Install External Tools
+
+* Install **Tesseract OCR**
+* Install **Poppler** (for PDF processing)
+
+---
+
+### 5️⃣ Run Redis
+
+```bash
 redis-server
+```
 
-6️⃣ Start Celery Worker
+---
+
+### 6️⃣ Start Celery Worker
+
+```bash
 celery -A origin.procure_ai.celery_worker worker --loglevel=info
+```
 
-7️⃣ Run FastAPI
+---
+
+### 7️⃣ Run FastAPI Server
+
+```bash
 uvicorn main:app --reload
+```
 
-🧠 Core Intelligence
+---
 
-🔥 Vendor Scoring Formula
+## 🧠 Core Intelligence
 
+### 🔥 Vendor Scoring Formula
+
+```
 Score =
   (Price Factor × 0.4) +
   (Delivery Factor × 0.3) +
   (Warranty × 0.2) +
   (Confidence × 0.1)
-  
-🔐 Key Strengths
+```
 
-AI-driven decision making
-Explainable outputs
-Real-time vendor comparison
-Scalable async architecture
-Production-ready design
+---
 
-📈 Future Enhancements
+## 🔐 Key Strengths
 
-📊 Frontend dashboard (React)
-🔍 Vendor history tracking
-🤖 Fine-tuned procurement model
-☁️ Cloud deployment
-📱 Mobile app
-👨‍💻 Author
+* AI-driven decision making
+* Explainable outputs
+* Real-time vendor comparison
+* Scalable async architecture
+* Production-ready design
 
-Developed as part of an AI + Backend + System Design Project
+---
 
-📜 License
+## 📈 Future Enhancements
+
+* 📊 React frontend dashboard
+* 🔍 Vendor history tracking
+* 🤖 Fine-tuned procurement model
+* ☁️ Cloud deployment
+* 📱 Mobile application
+
+---
+
+## 👨‍💻 Author
+
+Developed as part of an **AI + Backend + System Design Project**
+
+---
+
+## 📜 License
 
 MIT License
 
-⭐ Support
+---
 
-If you like this project:
+## ⭐ Support
 
-⭐ Star the repo
-🍴 Fork it
-🚀 Share it
+If you found this useful:
+
+* ⭐ Star the repository
+* 🍴 Fork it
+* 🚀 Share it
+
